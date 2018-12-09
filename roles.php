@@ -4,6 +4,7 @@
  * Description: This plugin handles roles and capabilities.
  */
 
+use Roles\Libraries\WpDateTimeZone;
 use Roles\RegisterRoles;
 
 define('ROLES_PATH', __DIR__ . '/roles');
@@ -18,10 +19,9 @@ if (file_exists(ROLES_PATH .'/vendor/autoload.php')) {
 /** Runs the Role mu-plugin */
 add_action('plugins_loaded', function() {
     $registerRoles = new RegisterRoles;
+    $registerRoles->registerRoles();
 
     register_roles_cron($registerRoles);
-
-    $registerRoles->registerRoles();
 });
 
 /**
@@ -31,10 +31,11 @@ add_action('plugins_loaded', function() {
  */
 function register_roles_cron(RegisterRoles $registerRoles)
 {
-    date_default_timezone_set(get_option('timezone_string'));
+    /** Generates a DateTime object according to WordPress's Settings -> General -> Timezone settings */
+    $date = new DateTime('today midnight', WpDateTimeZone::getWpTimezone());
 
     if ( ! wp_next_scheduled('regenerate_roles')) {
-        wp_schedule_event(strtotime('today midnight'), 'daily', 'regenerate_roles_hook', $registerRoles);
+        wp_schedule_event($date->getTimestamp(), 'daily', 'regenerate_roles_hook', $registerRoles);
     }
 }
 
