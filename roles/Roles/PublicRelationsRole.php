@@ -12,7 +12,10 @@ class PublicRelationsRole extends RoleAbstract
             'public_relations',
             __('Public Relations'),
             [
-                'read'
+                'read',
+                'edit_post',
+                'publish_post',
+                'delete_post'
             ]
         );
     }
