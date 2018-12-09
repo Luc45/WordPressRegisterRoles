@@ -34,10 +34,10 @@ function register_roles_cron(RegisterRoles $registerRoles)
     date_default_timezone_set(get_option('timezone_string'));
 
     if ( ! wp_next_scheduled('regenerate_roles')) {
-        wp_schedule_event(strtotime('today midnight'), 'daily', 'regenerate_roles_hook');
+        wp_schedule_event(strtotime('today midnight'), 'daily', 'regenerate_roles_hook', $registerRoles);
     }
-
-    add_action('regenerate_roles_hook', function() use ($registerRoles) {
-        $registerRoles->regenerateRoles();
-    });
 }
+
+add_action('regenerate_roles_hook', function(RegisterRoles $registerRoles) {
+    $registerRoles->regenerateRoles();
+});
